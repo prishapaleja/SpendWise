@@ -1,0 +1,7 @@
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+const COLORS = ['#245C45', '#76A88C', '#A7CEB7', '#E8A23B', '#6E8DAD', '#D95757', '#B8A4D8', '#D5DCCF'];
+export default function CategoryChart({ data }) {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  if (!total) return <div className="chart-empty"><div className="empty-ring">₹</div><strong>No expenses yet</strong><span>Add a transaction to see your spending breakdown.</span></div>;
+  return <div className="chart-layout"><div className="donut-wrap"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={data} dataKey="value" nameKey="name" innerRadius="67%" outerRadius="91%" paddingAngle={3} stroke="none">{data.map((entry, i) => <Cell key={entry.name} fill={COLORS[i % COLORS.length]}/>)}</Pie><Tooltip formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Spent']}/></PieChart></ResponsiveContainer><div className="donut-center"><strong>₹{total.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong><span>Total spent</span></div></div><div className="chart-legend">{data.slice(0, 6).map((item, i) => <div className="legend-row" key={item.name}><span className="legend-dot" style={{ background: COLORS[i % COLORS.length] }}/><span>{item.name}</span><strong>₹{item.value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong></div>)}</div></div>;
+}

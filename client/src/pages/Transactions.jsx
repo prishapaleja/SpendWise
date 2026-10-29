@@ -1,0 +1,13 @@
+import React from 'react';
+import { Plus, Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import TransactionItem from '../components/TransactionItem.jsx';
+export default function Transactions({ transactions, onAdd, onEdit, onDelete }) {
+ return <TransactionsContent transactions={transactions} onAdd={onAdd} onEdit={onEdit} onDelete={onDelete}/>;
+}
+function TransactionsContent({ transactions, onAdd, onEdit, onDelete }) {
+ const [search, setSearch] = React.useState(''); const [category, setCategory] = React.useState('All categories'); const [type, setType] = React.useState('All types');
+ const filtered = transactions.filter(t => t.title.toLowerCase().includes(search.toLowerCase()) && (category === 'All categories' || t.category === category) && (type === 'All types' || t.type === type.toLowerCase()));
+ return <div className="page-content"><div className="page-heading"><div><p className="eyebrow">EVERY RUPEE, ACCOUNTED FOR</p><h1>Transactions</h1><p className="page-subtitle">A clear view of money coming in and going out.</p></div><button className="button primary" onClick={onAdd}><Plus size={17}/> Add transaction</button></div>
+ <section className="panel transactions-panel"><div className="filter-bar"><div className="search-field"><Search size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search transactions..."/></div><label className="filter-select"><SlidersHorizontal size={16}/><select value={category} onChange={e=>setCategory(e.target.value)}><option>All categories</option>{['Food','Transport','Shopping','Bills','Entertainment','Health','Education','Salary','Other'].map(c=><option key={c}>{c}</option>)}</select></label><label className="filter-select"><ArrowUpDown size={16}/><select value={type} onChange={e=>setType(e.target.value)}><option>All types</option><option>Expense</option><option>Income</option></select></label></div>
+ <div className="transaction-table-head"><span>TRANSACTION</span><span>AMOUNT</span><span>ACTIONS</span></div>{filtered.length ? <div className="transaction-list">{[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=><TransactionItem key={t._id} transaction={t} onEdit={onEdit} onDelete={onDelete}/>)}</div> : <div className="empty-state"><span>⌕</span><strong>No transactions found</strong><p>Try another search or add a new transaction.</p><button className="button secondary" onClick={onAdd}><Plus size={16}/> Add transaction</button></div>}<div className="table-footer">Showing <strong>{filtered.length}</strong> of {transactions.length} transactions</div></section><footer className="page-footer"><span>Made for mindful money habits.</span><span>SPENDWISE <i>·</i> KEEP IT BALANCED</span></footer></div>;
+}
